@@ -45,6 +45,10 @@ func (engine *Mngo) Run(p string) {
 	http.ListenAndServe(":" + p, nil)
 }
 
+/**
+此函数可以从 go run shell 中获取 env 参数
+@example: go run ./App.go --env="develop"
+ */
 func getEnv() string {
 	env := flag.String("env", "develop", "server env")
 	flag.Parse()
@@ -79,7 +83,7 @@ func (engine *Mngo) response(path string, method string, fn func(w http.Response
 	engine.routerGroup = append(engine.routerGroup, *rg)
 }
 
-func Write(w http.ResponseWriter, content map[string]interface{}) {
+func Write(w http.ResponseWriter, content interface{}) {
 	js, err := json.Marshal(content)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
