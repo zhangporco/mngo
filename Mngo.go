@@ -1,4 +1,4 @@
-package engine
+package mngo
 
 import (
 	"net/http"
@@ -9,10 +9,14 @@ import (
 	"sync"
 )
 
-var engine *Engine
+var engine *Mngo
 var once sync.Once
 
-type Engine struct {
+/**
+	mngo 启动引擎
+	@author Porco
+ */
+type Mngo struct {
 	log bool
 	debug bool
 	Env string
@@ -21,18 +25,18 @@ type Engine struct {
 	routerGroup []RouterGroups
 }
 
-func NewEngine() *Engine {
+func NewMngo() *Mngo {
 	once.Do(func() {
-		engine = &Engine{
+		engine = &Mngo{
 			log : true,
 			debug : false,
-			Env: getEnv(),
+			//Env: getEnv(),
 		}
 	})
 	return engine
 }
 
-func (engine *Engine) Run(p string) {
+func (engine *Mngo) Run(p string) {
 	engine.port = p
 	engine.logger(p)
 	for _, v := range engine.routerGroup {
@@ -47,19 +51,19 @@ func getEnv() string {
 	return *env
 }
 
-func (engine *Engine) SetLog(log bool) {
+func (engine *Mngo) SetLog(log bool) {
 	engine.log = log
 }
 
-func (engine *Engine) GET(path string, fn func(w http.ResponseWriter, r *http.Request)) {
+func (engine *Mngo) GET(path string, fn func(w http.ResponseWriter, r *http.Request)) {
 	engine.response(path, "GET", fn)
 }
 
-func (engine *Engine) POST(path string, fn func(w http.ResponseWriter, r *http.Request)) {
+func (engine *Mngo) POST(path string, fn func(w http.ResponseWriter, r *http.Request)) {
 	engine.response(path, "POST", fn)
 }
 
-func (engine *Engine) response(path string, method string, fn func(w http.ResponseWriter, r *http.Request)) {
+func (engine *Mngo) response(path string, method string, fn func(w http.ResponseWriter, r *http.Request)) {
 	rg := newRouterGroups()
 	rg.path = path
 	rg.method = method
@@ -85,15 +89,18 @@ func Write(w http.ResponseWriter, content map[string]interface{}) {
 	w.Write(js)
 }
 
-func (engine *Engine) logger(port string) {
-	log.SetPrefix("【Engine】")
+func (engine *Mngo) logger(port string) {
+	log.SetPrefix("【Mngo engine】")
 	log.SetFlags(log.Ldate|log.Ltime|log.Lshortfile)
 	if engine.log {
-		log.Println("Engine starting")
-		log.Println("Engine port --", port)
+		log.Println("Mngo starting")
+		log.Println("Mngo port --", port)
 	}
 }
 
+/**
+	解析参数
+ */
 func ParseData(r *http.Request) map[string]interface{} {
 	result, _:= ioutil.ReadAll(r.Body)
 	r.Body.Close()
