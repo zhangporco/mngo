@@ -105,11 +105,14 @@ func (engine *Mngo) logger(port string) {
 /**
 	解析参数
  */
-func ParseData(r *http.Request) map[string]interface{} {
+func ParseData(r *http.Request) interface{} {
 	result, _:= ioutil.ReadAll(r.Body)
 	r.Body.Close()
 	var f interface{}
 	json.Unmarshal(result, &f)
+	if f == nil {
+		return f
+	}
 	m := f.(map[string]interface{})
 	return m
 }
