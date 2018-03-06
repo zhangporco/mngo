@@ -9,6 +9,5 @@ type RouterGroups struct {
 }
 
 func newRouterGroups() *RouterGroups {
-	rg := &RouterGroups{}
-	return rg
+	return &RouterGroups{}
 }
